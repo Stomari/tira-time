@@ -1,7 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
-import { TextInput, Button } from 'react-native-paper';
+import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
+import { TextInput, Button, Card, Text } from 'react-native-paper';
 
 export default function App() {
   const [numberOfTeams, setNumberOfTeams] = useState<string>('');
@@ -37,35 +37,66 @@ export default function App() {
   const onPressHandler = () => {
     const itemsList = listInput.split(/\s*,\s*/);
     shuffle(itemsList);
+    const playerNumberByTeam = itemsList.length / parseInt(numberOfTeams, 10);
+    const teams = {};
+    let starterIndex = 0;
+    for (let i = 1; i <= parseInt(numberOfTeams, 10); i++) {
+      teams[i] = itemsList.slice(
+        starterIndex,
+        starterIndex + playerNumberByTeam,
+      );
+      starterIndex = starterIndex + playerNumberByTeam;
+    }
+    setTeamsList(teams);
+    console.log(teams);
   };
 
   return (
     <>
-      <StatusBar />
-      <View style={styles.container}>
-        <View style={{ width: '100%', paddingHorizontal: 16, gap: 8 }}>
-          <TextInput
-            mode="outlined"
-            label="N.º de times"
-            keyboardType="numeric"
-            value={numberOfTeams}
-            onChangeText={(text) => setNumberOfTeams(text)}
-          />
-          <View style={{ height: 300 }}>
-            <TextInput
-              mode="outlined"
-              label="Digite a lista separado por vírgula"
-              multiline
-              style={{ flex: 1 }}
-              value={listInput}
-              onChangeText={(text) => setListInput(text)}
-            />
+      <SafeAreaView>
+        <ScrollView>
+          <StatusBar />
+          <View style={styles.container}>
+            <View style={{ width: '100%', paddingHorizontal: 16, gap: 8 }}>
+              <TextInput
+                mode="outlined"
+                label="N.º de times"
+                keyboardType="numeric"
+                value={numberOfTeams}
+                onChangeText={(text) => setNumberOfTeams(text)}
+              />
+              <View style={{ height: 300 }}>
+                <TextInput
+                  mode="outlined"
+                  label="Digite a lista separado por vírgula"
+                  multiline
+                  style={{ flex: 1 }}
+                  value={listInput}
+                  onChangeText={(text) => setListInput(text)}
+                />
+              </View>
+            </View>
+            <Button mode="contained" onPress={onPressHandler}>
+              Tirar Time!
+            </Button>
+            <Card style={{ width: '100%' }}>
+              <Card.Content>
+                {Object.keys(teamsList).map((key) => {
+                  return (
+                    <View key={key}>
+                      <Text variant="titleLarge">{`Team ${key}`}</Text>
+                      <Text variant="bodyMedium">{`${teamsList[key].join(
+                        '\n',
+                      )}`}</Text>
+                    </View>
+                  );
+                })}
+              </Card.Content>
+            </Card>
+            <Button mode="contained">Compartilhar Times!</Button>
           </View>
-        </View>
-        <Button mode="contained" onPress={onPressHandler}>
-          Tirar Time!
-        </Button>
-      </View>
+        </ScrollView>
+      </SafeAreaView>
     </>
   );
 }
