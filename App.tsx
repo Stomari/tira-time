@@ -1,7 +1,11 @@
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
 import { TextInput, Button, Card, Text } from 'react-native-paper';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [numberOfTeams, setNumberOfTeams] = useState<string>('');
@@ -50,9 +54,8 @@ export default function App() {
     setTeamsList(teams);
     console.log(teams);
   };
-
-  return (
-    <>
+  function HomeScreen() {
+    return (
       <SafeAreaView>
         <ScrollView>
           <StatusBar />
@@ -97,6 +100,28 @@ export default function App() {
           </View>
         </ScrollView>
       </SafeAreaView>
+    );
+  }
+
+  function ScreenWithTierList() {
+    return (
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text>Home Screen</Text>
+      </View>
+    );
+  }
+
+  return (
+    <>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen
+            name="Tier List Screen"
+            component={ScreenWithTierList}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
     </>
   );
 }
