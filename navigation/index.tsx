@@ -17,9 +17,17 @@ export const Navigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home" component={Home} />
+        <Stack.Screen
+          name="Home"
+          options={{ title: 'Tira Time' }}
+          component={Home}
+        />
         {/* <Stack.Screen name="Tier List Screen" component={ScreenWithTierList} /> */}
-        <Stack.Screen name="Teams" component={Teams} />
+        <Stack.Screen
+          name="Teams"
+          options={{ title: 'Times' }}
+          component={Teams}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
