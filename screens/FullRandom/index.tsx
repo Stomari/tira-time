@@ -50,7 +50,7 @@ export const FullRandom = (props: TFullRandom) => {
     if (!listInput || !numberOfTeams) return;
 
     // Select regex by comma or by space
-    const regex = checked === 'comma' ? /\s*,\s*/ : /\s*\b\s*/;
+    const regex = checked === 'comma' ? /\s*,\s*/ : /\s+/;
     // Create array of names
     const itemsList = listInput.split(regex);
     // Shuffle array for randomness

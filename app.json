@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "tira-time",
+    "name": "Tira Time",
     "slug": "tira-time",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/TiraTime2x.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/background.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -19,12 +19,25 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/TiraTime2x.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.tira.time"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/TiraTime2x.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e9be1cba-78a4-4929-8058-181eeed98f60"
+      }
+    },
+    "owner": "sergio.tomari",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/e9be1cba-78a4-4929-8058-181eeed98f60"
     }
   }
 }
