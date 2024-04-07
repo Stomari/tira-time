@@ -22,7 +22,7 @@ export const Home = (props: THome) => {
           </Text>
         </Card.Content>
       </Card>
-      <Card>
+      <Card onPress={() => navigation.navigate('RandomByTier')}>
         <Card.Title title="Por Potes" titleVariant="titleLarge" />
         <Card.Content>
           <Text variant="bodyMedium">

@@ -3,11 +3,13 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { FullRandom } from '../screens/FullRandom';
 import { Home } from '../screens/Home';
+import { RandomByTier } from '../screens/RandomByTier';
 import { Teams } from '../screens/Teams';
 
 export type TRootStackParamList = {
   Home: undefined;
   FullRandom: undefined;
+  RandomByTier: undefined;
   Teams: {
     teamsList: { [key: string]: string[] };
   };
@@ -29,7 +31,11 @@ export const Navigation = () => {
           options={{ title: '100% Aleatório' }}
           component={FullRandom}
         />
-        {/* <Stack.Screen name="Tier List Screen" component={ScreenWithTierList} /> */}
+        <Stack.Screen
+          name="RandomByTier"
+          options={{ title: 'Por Potes' }}
+          component={RandomByTier}
+        />
         <Stack.Screen
           name="Teams"
           options={{ title: 'Times' }}
