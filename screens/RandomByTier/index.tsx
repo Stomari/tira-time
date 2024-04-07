@@ -1,11 +1,13 @@
 import Icons from '@expo/vector-icons/Ionicons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { TextInput, Button, RadioButton, Text } from 'react-native-paper';
 
 import { TRootStackParamList } from '../../navigation';
 import { useAppTheme } from '../../theme';
+import { getData, storeData } from '../../tools/asyncStorage';
+import { shuffle } from '../../tools/utils/shuffleArray';
 
 export type TRandomByTier = NativeStackScreenProps<
   TRootStackParamList,
@@ -15,6 +17,8 @@ export type TRandomByTier = NativeStackScreenProps<
 type TInputList = {
   [key: number]: string;
 };
+
+const STORE_LIST_KEY = 'random-by-tier-list';
 
 export const RandomByTier = (props: TRandomByTier) => {
   const [numberOfTeams, setNumberOfTeams] = useState<string>('');
@@ -28,31 +32,16 @@ export const RandomByTier = (props: TRandomByTier) => {
 
   const { navigation } = props;
 
-  /**
-   * Shuffles a list of items.
-   * Explanation can be found here: https://bost.ocks.org/mike/shuffle/
-   * @param array List of strings to shuffle
-   * @returns Shuffled list
-   */
-  const shuffle = (array: string[]): string[] => {
-    let currentIndex: number = array.length;
-    let randomIndex: number;
-
-    // While there remain elements to shuffle.
-    while (currentIndex > 0) {
-      // Pick a remaining element.
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-
-      // And swap it with the current element.
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex],
-        array[currentIndex],
-      ];
+  const fetchStoredList = async () => {
+    const list = await getData<TInputList>(STORE_LIST_KEY, true);
+    if (list) {
+      setInputList(list);
     }
-
-    return array;
   };
+
+  useEffect(() => {
+    fetchStoredList();
+  }, []);
 
   const onPressHandler = () => {
     if (!inputList[1] || !inputList[2] || !numberOfTeams) return;
@@ -71,7 +60,9 @@ export const RandomByTier = (props: TRandomByTier) => {
     let lastTeamUpdated = 1;
 
     // Loop for every tier
-    Object.keys(inputList).forEach((key, index) => {
+    Object.keys(inputList).forEach((key) => {
+      if (!inputList[key].length) return;
+
       // Create array of names
       const itemsList: string[] = inputList[key].trim().split(regex);
       // Shuffle array for randomness
@@ -96,6 +87,9 @@ export const RandomByTier = (props: TRandomByTier) => {
         }
       }
     });
+
+    storeData(inputList, STORE_LIST_KEY);
+
     // Display teams on Teams screen
     navigation.navigate('Teams', { teamsList: teams });
   };
@@ -163,7 +157,7 @@ export const RandomByTier = (props: TRandomByTier) => {
 
             {/* Names List */}
             {Object.keys(inputList).map((key) => (
-              <View style={styles.listInput}>
+              <View style={styles.listInput} key={key}>
                 <TextInput
                   mode="outlined"
                   label={`Pote ${key}`}
