@@ -1,15 +1,19 @@
 import { useTheme } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { TextInput, Button, RadioButton, Text } from 'react-native-paper';
 
 import { TRootStackParamList } from '../../navigation';
+import { getData, storeData } from '../../tools/asyncStorage';
+import { shuffle } from '../../tools/utils/shuffleArray';
 
 export type TFullRandom = NativeStackScreenProps<
   TRootStackParamList,
   'FullRandom'
 >;
+
+const STORE_LIST_KEY = 'full-random-list';
 
 export const FullRandom = (props: TFullRandom) => {
   const [numberOfTeams, setNumberOfTeams] = useState<string>('');
@@ -20,39 +24,25 @@ export const FullRandom = (props: TFullRandom) => {
 
   const { navigation } = props;
 
-  /**
-   * Shuffles a list of items.
-   * Explanation can be found here: https://bost.ocks.org/mike/shuffle/
-   * @param array List of strings to shuffle
-   * @returns Shuffled list
-   */
-  const shuffle = (array: string[]): string[] => {
-    let currentIndex: number = array.length;
-    let randomIndex: number;
-
-    // While there remain elements to shuffle.
-    while (currentIndex > 0) {
-      // Pick a remaining element.
-      randomIndex = Math.floor(Math.random() * currentIndex);
-      currentIndex--;
-
-      // And swap it with the current element.
-      [array[currentIndex], array[randomIndex]] = [
-        array[randomIndex],
-        array[currentIndex],
-      ];
+  const fetchStoredList = async () => {
+    const list = await getData<string>(STORE_LIST_KEY);
+    if (list) {
+      setListInput(list);
     }
-
-    return array;
   };
+
+  // Retrieve last list
+  useEffect(() => {
+    fetchStoredList();
+  }, []);
 
   const onPressHandler = () => {
     if (!listInput || !numberOfTeams) return;
 
     // Select regex by comma or by space
-    const regex = checked === 'comma' ? /\s*,\s*/ : /\s+/;
+    const regex = checked === 'comma' ? /\s*,\s*(?=\S)/ : /\s+/;
     // Create array of names
-    const itemsList = listInput.split(regex);
+    const itemsList = listInput.trim().split(regex);
     // Shuffle array for randomness
     shuffle(itemsList);
     // Calculate number of players for each team
@@ -68,6 +58,9 @@ export const FullRandom = (props: TFullRandom) => {
       );
       starterIndex = starterIndex + playerNumberByTeam;
     }
+
+    // Cache list
+    storeData(listInput, STORE_LIST_KEY);
 
     // Display teams on Teams screen
     navigation.navigate('Teams', { teamsList: teams });
