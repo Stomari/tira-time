@@ -2,8 +2,14 @@ import Icons from '@expo/vector-icons/Ionicons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import { TextInput, Button, RadioButton, Text } from 'react-native-paper';
+import {
+  TextInput as PaperTextInput,
+  Button,
+  RadioButton,
+  Text,
+} from 'react-native-paper';
 
+import { TextInput } from '../../components/TextInput';
 import { TRootStackParamList } from '../../navigation';
 import { useAppTheme } from '../../theme';
 import { getData, storeData } from '../../tools/asyncStorage';
@@ -120,7 +126,7 @@ export const RandomByTier = (props: TRandomByTier) => {
         <View style={styles.container}>
           <View style={styles.formContainer}>
             {/* Teams Number */}
-            <TextInput
+            <PaperTextInput
               mode="outlined"
               label="Número de times"
               keyboardType="numeric"
