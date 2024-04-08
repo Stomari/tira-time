@@ -68,9 +68,8 @@ export const RandomByTier = (props: TRandomByTier) => {
       // Shuffle array for randomness
       shuffle(itemsList);
       // Calculate number of players for each team
-      const playerNumberByTeam = Math.floor(
-        itemsList.length / parseInt(numberOfTeams, 10),
-      );
+      const playerNumberByTeam =
+        Math.floor(itemsList.length / parseInt(numberOfTeams, 10)) || 1;
 
       let starterIndex = 0;
 
