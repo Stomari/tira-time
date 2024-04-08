@@ -2,7 +2,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import * as MediaLibrary from 'expo-media-library';
 import * as Sharing from 'expo-sharing';
 import { useRef } from 'react';
-import { Alert, View } from 'react-native';
+import { Alert, ScrollView, View } from 'react-native';
 import { Card, Button, Text } from 'react-native-paper';
 import { captureRef } from 'react-native-view-shot';
 
@@ -43,9 +43,13 @@ export const Teams = (props: TTeams) => {
   };
 
   return (
-    <>
+    <ScrollView>
       <View style={{ flex: 1, padding: 24 }}>
-        <View ref={imageRef} style={{ flex: 1 }} collapsable={false}>
+        <View
+          ref={imageRef}
+          style={{ flex: 1, marginBottom: 16 }}
+          collapsable={false}
+        >
           <Card>
             <Card.Content style={{ gap: 16 }}>
               {Object.keys(teamsList).map((key) => {
@@ -65,6 +69,6 @@ export const Teams = (props: TTeams) => {
           Compartilhar Times!
         </Button>
       </View>
-    </>
+    </ScrollView>
   );
 };
