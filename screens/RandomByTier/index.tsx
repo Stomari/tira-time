@@ -10,6 +10,7 @@ import {
 } from 'react-native-paper';
 
 import { TextInput } from '../../components/TextInput';
+import { useNumberOfTeams } from '../../hooks/useNumberOfTeams';
 import { TRootStackParamList } from '../../navigation';
 import { useAppTheme } from '../../theme';
 import { getData, storeData } from '../../tools/asyncStorage';
@@ -27,7 +28,7 @@ type TInputList = {
 const STORE_LIST_KEY = 'random-by-tier-list';
 
 export const RandomByTier = (props: TRandomByTier) => {
-  const [numberOfTeams, setNumberOfTeams] = useState<string>('');
+  const { numberOfTeams, onSetNumberOfTeams, error } = useNumberOfTeams();
   const [inputList, setInputList] = useState<TInputList>({
     1: '',
     2: '',
@@ -50,7 +51,7 @@ export const RandomByTier = (props: TRandomByTier) => {
   }, []);
 
   const onPressHandler = () => {
-    if (!inputList[1] || !inputList[2] || !numberOfTeams) return;
+    if (!inputList[1] || !inputList[2] || !numberOfTeams || error) return;
 
     const teams = {};
 
@@ -126,13 +127,21 @@ export const RandomByTier = (props: TRandomByTier) => {
         <View style={styles.container}>
           <View style={styles.formContainer}>
             {/* Teams Number */}
-            <PaperTextInput
-              mode="outlined"
-              label="Número de times"
-              keyboardType="numeric"
-              value={numberOfTeams}
-              onChangeText={(text) => setNumberOfTeams(text)}
-            />
+            <View>
+              <PaperTextInput
+                mode="outlined"
+                label="Número de times"
+                keyboardType="numeric"
+                value={numberOfTeams}
+                onChangeText={(text) => onSetNumberOfTeams(text)}
+                error={error}
+              />
+              {error && (
+                <Text style={[styles.inputError, { color: colors.error }]}>
+                  Número de times deve ser entre 2 e 100
+                </Text>
+              )}
+            </View>
 
             {/* Radio Buttons */}
             <View style={styles.radioBtnContainer}>
@@ -212,7 +221,7 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   formContainer: {
-    gap: 8,
+    gap: 24,
     flex: 1,
   },
   radioBtnContainer: {
@@ -235,5 +244,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-evenly',
     marginTop: 8,
+  },
+  inputError: {
+    position: 'absolute',
+    bottom: -20,
   },
 });

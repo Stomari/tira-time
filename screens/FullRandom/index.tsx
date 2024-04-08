@@ -1,4 +1,3 @@
-import { useTheme } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useEffect, useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
@@ -10,7 +9,9 @@ import {
 } from 'react-native-paper';
 
 import { TextInput } from '../../components/TextInput';
+import { useNumberOfTeams } from '../../hooks/useNumberOfTeams';
 import { TRootStackParamList } from '../../navigation';
+import { useAppTheme } from '../../theme';
 import { getData, storeData } from '../../tools/asyncStorage';
 import { shuffle } from '../../tools/utils/shuffleArray';
 
@@ -22,11 +23,11 @@ export type TFullRandom = NativeStackScreenProps<
 const STORE_LIST_KEY = 'full-random-list';
 
 export const FullRandom = (props: TFullRandom) => {
-  const [numberOfTeams, setNumberOfTeams] = useState<string>('');
+  const { numberOfTeams, onSetNumberOfTeams, error } = useNumberOfTeams();
   const [listInput, setListInput] = useState<string>('');
   const [checked, setChecked] = useState<'comma' | 'space'>('comma');
 
-  const { colors } = useTheme();
+  const { colors } = useAppTheme();
 
   const { navigation } = props;
 
@@ -43,7 +44,7 @@ export const FullRandom = (props: TFullRandom) => {
   }, []);
 
   const onPressHandler = () => {
-    if (!listInput || !numberOfTeams) return;
+    if (!listInput || !numberOfTeams || error) return;
 
     // Select regex by comma or by space
     const regex = checked === 'comma' ? /\s*,\s*(?=\S)/ : /\s+/;
@@ -78,13 +79,21 @@ export const FullRandom = (props: TFullRandom) => {
         <View style={styles.container}>
           <View style={styles.formContainer}>
             {/* Teams Number */}
-            <PaperTextInput
-              mode="outlined"
-              label="Número de times"
-              keyboardType="numeric"
-              value={numberOfTeams}
-              onChangeText={(text) => setNumberOfTeams(text)}
-            />
+            <View>
+              <PaperTextInput
+                mode="outlined"
+                label="Número de times"
+                keyboardType="numeric"
+                value={numberOfTeams}
+                onChangeText={(text) => onSetNumberOfTeams(text)}
+                error={error}
+              />
+              {error && (
+                <Text style={[styles.inputError, { color: colors.error }]}>
+                  Número de times deve ser entre 2 e 100
+                </Text>
+              )}
+            </View>
 
             {/* Radio Buttons */}
             <View style={styles.radioBtnContainer}>
@@ -145,7 +154,7 @@ const styles = StyleSheet.create({
     padding: 24,
   },
   formContainer: {
-    gap: 8,
+    gap: 24,
     flex: 1,
   },
   radioBtnContainer: {
@@ -163,5 +172,9 @@ const styles = StyleSheet.create({
   },
   btnContainer: {
     padding: 24,
+  },
+  inputError: {
+    position: 'absolute',
+    bottom: -20,
   },
 });
