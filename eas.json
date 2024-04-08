@@ -1,6 +1,6 @@
 {
   "cli": {
-    "version": ">= 7.0.0"
+    "version": ">= 7.7.0"
   },
   "build": {
     "development": {
@@ -16,12 +16,6 @@
       "channel": "production"
     }
   },
-  "updates": {
-    "requestHeaders": {
-      "expo-channel-name": "main"
-    }
-  },
-  "runtimeVersion": "1.0.0",
   "submit": {
     "production": {}
   }
