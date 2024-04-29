@@ -5,7 +5,7 @@
     "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/TiraTime2x.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/background.png",
       "resizeMode": "contain",

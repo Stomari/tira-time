@@ -2,11 +2,14 @@ import { StatusBar } from 'expo-status-bar';
 import { PaperProvider } from 'react-native-paper';
 
 import { Navigation } from './navigation';
-import { theme } from './theme';
+import { useCommonStore } from './store/common';
+import { darkTheme, theme } from './theme';
 
 export default function App() {
+  const { isDarkMode } = useCommonStore();
+
   return (
-    <PaperProvider theme={theme}>
+    <PaperProvider theme={isDarkMode ? darkTheme : theme}>
       <StatusBar style="auto" />
       <Navigation />
     </PaperProvider>
