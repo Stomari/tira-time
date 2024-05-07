@@ -1,6 +1,6 @@
 import Icons from '@expo/vector-icons/Ionicons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import {
   TextInput as PaperTextInput,
@@ -12,8 +12,8 @@ import {
 import { TextInput } from '../../components/TextInput';
 import { useNumberOfTeams } from '../../hooks/useNumberOfTeams';
 import { TRootStackParamList } from '../../navigation';
+import { useTeamsStore } from '../../store/teams';
 import { useAppTheme } from '../../theme';
-import { getData, storeData } from '../../tools/asyncStorage';
 import { shuffle } from '../../tools/utils/shuffleArray';
 
 export type TRandomByTier = NativeStackScreenProps<
@@ -25,30 +25,22 @@ type TInputList = {
   [key: number]: string;
 };
 
-const STORE_LIST_KEY = 'random-by-tier-list';
-
 export const RandomByTier = (props: TRandomByTier) => {
-  const { numberOfTeams, onSetNumberOfTeams, error } = useNumberOfTeams();
-  const [inputList, setInputList] = useState<TInputList>({
-    1: '',
-    2: '',
-  });
-  const [checked, setChecked] = useState<'comma' | 'space'>('comma');
+  const { randomByTierHistory, setRandomByTierHistory } = useTeamsStore();
+
+  const { numberOfTeams, onSetNumberOfTeams, error } = useNumberOfTeams(
+    randomByTierHistory.numberOfTeams,
+  );
+  const [inputList, setInputList] = useState<TInputList>(
+    randomByTierHistory.list ?? { 1: '', 2: '' },
+  );
+  const [checked, setChecked] = useState<'comma' | 'space'>(
+    randomByTierHistory.separatorMode,
+  );
 
   const { colors } = useAppTheme();
 
   const { navigation } = props;
-
-  const fetchStoredList = async () => {
-    const list = await getData<TInputList>(STORE_LIST_KEY, true);
-    if (list) {
-      setInputList(list);
-    }
-  };
-
-  useEffect(() => {
-    fetchStoredList();
-  }, []);
 
   const onPressHandler = () => {
     if (!inputList[1] || !inputList[2] || !numberOfTeams || error) return;
@@ -94,7 +86,12 @@ export const RandomByTier = (props: TRandomByTier) => {
       }
     });
 
-    storeData(inputList, STORE_LIST_KEY);
+    // Store Data
+    setRandomByTierHistory({
+      list: inputList,
+      numberOfTeams,
+      separatorMode: checked,
+    });
 
     // Display teams on Teams screen
     navigation.navigate('Teams', { teamsList: teams });

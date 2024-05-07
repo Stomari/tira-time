@@ -1,7 +1,9 @@
 import { useState } from 'react';
 
-export const useNumberOfTeams = () => {
-  const [numberOfTeams, setNumberOfTeams] = useState<string>('');
+export const useNumberOfTeams = (initialValue?: string) => {
+  const [numberOfTeams, setNumberOfTeams] = useState<string>(
+    initialValue ?? '',
+  );
   const [error, setError] = useState<boolean>(false);
 
   const onSetNumberOfTeams = (text: string) => {

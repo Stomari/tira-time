@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import {
   TextInput as PaperTextInput,
@@ -11,8 +11,8 @@ import {
 import { TextInput } from '../../components/TextInput';
 import { useNumberOfTeams } from '../../hooks/useNumberOfTeams';
 import { TRootStackParamList } from '../../navigation';
+import { useTeamsStore } from '../../store/teams';
 import { useAppTheme } from '../../theme';
-import { getData, storeData } from '../../tools/asyncStorage';
 import { shuffle } from '../../tools/utils/shuffleArray';
 
 export type TFullRandom = NativeStackScreenProps<
@@ -20,28 +20,20 @@ export type TFullRandom = NativeStackScreenProps<
   'FullRandom'
 >;
 
-const STORE_LIST_KEY = 'full-random-list';
-
 export const FullRandom = (props: TFullRandom) => {
-  const { numberOfTeams, onSetNumberOfTeams, error } = useNumberOfTeams();
-  const [listInput, setListInput] = useState<string>('');
-  const [checked, setChecked] = useState<'comma' | 'space'>('comma');
+  const { fullRandomHistory, setFullRandomHistory } = useTeamsStore();
+
+  const { numberOfTeams, onSetNumberOfTeams, error } = useNumberOfTeams(
+    fullRandomHistory.numberOfTeams,
+  );
+  const [listInput, setListInput] = useState<string>(fullRandomHistory.list);
+  const [checked, setChecked] = useState<'comma' | 'space'>(
+    fullRandomHistory.separatorMode,
+  );
 
   const { colors } = useAppTheme();
 
   const { navigation } = props;
-
-  const fetchStoredList = async () => {
-    const list = await getData<string>(STORE_LIST_KEY);
-    if (list) {
-      setListInput(list);
-    }
-  };
-
-  // Retrieve last list
-  useEffect(() => {
-    fetchStoredList();
-  }, []);
 
   const onPressHandler = () => {
     if (!listInput || !numberOfTeams || error) return;
@@ -66,8 +58,12 @@ export const FullRandom = (props: TFullRandom) => {
       starterIndex = starterIndex + playerNumberByTeam;
     }
 
-    // Cache list
-    storeData(listInput, STORE_LIST_KEY);
+    // Store data
+    setFullRandomHistory({
+      list: listInput,
+      numberOfTeams,
+      separatorMode: checked,
+    });
 
     // Display teams on Teams screen
     navigation.navigate('Teams', { teamsList: teams });
