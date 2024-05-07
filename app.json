@@ -2,7 +2,7 @@
   "expo": {
     "name": "Tira Time",
     "slug": "tira-time",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "orientation": "portrait",
     "icon": "./assets/TiraTime2x.png",
     "userInterfaceStyle": "automatic",
@@ -23,7 +23,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.tira.time",
-      "versionCode": 3
+      "versionCode": 4
     },
     "web": {
       "favicon": "./assets/TiraTime2x.png"
