@@ -54,8 +54,8 @@ export const useTeamsStore = create<TeamsState>()(
       version: 1,
       migrate: (persistedState) => persistedState,
       merge: (persistedState: TeamsState, currentState) => ({
-        ...persistedState,
         ...currentState,
+        ...persistedState,
       }),
       storage: createJSONStorage(() => AsyncStorage),
     },
